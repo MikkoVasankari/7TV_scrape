@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 
 const arg = process.argv.slice(2);
+let emotesFound = false;
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -19,8 +20,6 @@ const arg = process.argv.slice(2);
   await page.goto("https://7tv.app/emotes?page=1&query=" + emote, {
     waitUntil: "networkidle2",
   });
-
-  let emotesFound = false;
 
   try {
     await page.waitForSelector(".emote-card-wrapper", { visible: true, timeout: 10000 });
