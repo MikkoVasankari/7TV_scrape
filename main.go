@@ -17,16 +17,15 @@ type Emote struct {
 }
 
 func main() {
+	args := os.Args
 
-	args := os.Args[1:]
-
-	if len(args) < 1 {
+	if len(args) < 2 || len(args) > 2 {
 		fmt.Println("You need to add a name for emote")
 		fmt.Println("Like: ./scrape_7TV emotename")
 		return
 	}
 
-	emote_name := args[0]
+	emote_name := args[1]
 
 	var emotes []Emote
 
@@ -53,7 +52,6 @@ func main() {
 }
 
 func getUserInput(infoText string) string {
-
 	fmt.Fprint(os.Stderr, infoText)
 
 	inputReader := bufio.NewReader(os.Stdin)
@@ -67,7 +65,6 @@ func getUserInput(infoText string) string {
 }
 
 func getEmotes(emote_name string, emotes *[]Emote) {
-
 	cmd := exec.Command("node", "fetchEmote.js", emote_name)
 
 	output, err := cmd.Output()
@@ -76,7 +73,13 @@ func getEmotes(emote_name string, emotes *[]Emote) {
 		return
 	}
 
+	if strings.TrimSpace(bytes.NewBuffer(output).String()) == "No emotes found" {
+		fmt.Println("\nNo emotes found for " + emote_name + " , make a new search")
+		return
+	}
+
 	err = json.Unmarshal(output, &emotes)
+
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return
