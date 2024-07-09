@@ -22,10 +22,51 @@ func main() {
 
 	if len(args) < 1 {
 		fmt.Println("You need to add a name for emote")
+		fmt.Println("Like: ./scrape_7TV emotename")
 		return
 	}
 
 	emote_name := args[0]
+
+	var emotes []Emote
+
+	getEmotes(emote_name, &emotes)
+
+	for {
+		input := getUserInput("Select emote by giving it's index (q to quit | n new search) ")
+
+		if input == "q" {
+			fmt.Println("Closing program ...")
+			break
+		}
+
+		if input == "n" {
+			input = getUserInput("Write new emote name to search for: ")
+			getEmotes(input, &emotes)
+		}
+
+		if input >= "0" || input <= "9" {
+			copyEmoteToClipboard(input, emotes, len(emotes)-1)
+		}
+
+	}
+}
+
+func getUserInput(infoText string) string {
+
+	fmt.Fprint(os.Stderr, infoText)
+
+	inputReader := bufio.NewReader(os.Stdin)
+	input, err := inputReader.ReadString('\n')
+	input = strings.TrimSpace(input)
+
+	if err != nil {
+		return "Error reading user input"
+	}
+	return input
+}
+
+func getEmotes(emote_name string, emotes *[]Emote) {
 
 	cmd := exec.Command("node", "fetchEmote.js", emote_name)
 
@@ -35,7 +76,6 @@ func main() {
 		return
 	}
 
-	var emotes []Emote
 	err = json.Unmarshal(output, &emotes)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
@@ -43,42 +83,38 @@ func main() {
 	}
 
 	fmt.Println("Suggested Emotes:")
-	for index, emote := range emotes {
+	for index, emote := range *emotes {
 		fmt.Printf("%v Link: https://7tv.app%s  Title: %s\n", index, emote.Href, emote.Title)
 	}
-
-	ReadUserInput("Select emote by giving it's index ", emotes, len(emotes)-1)
 }
 
-func ReadUserInput(label string, emotes []Emote, lengthOfItemList int) {
-	inputReader := bufio.NewReader(os.Stdin)
+func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int) {
 	xclipCmd := exec.Command("xclip", "-selection", "clipboard")
 
-	for {
-		fmt.Fprintf(os.Stderr, label+"")
-		input, err := inputReader.ReadString('\n')
+	if len(input) > 1 {
+		return
+	}
 
-		if err != nil {
-			fmt.Println("Error reading user input:", err)
-			return
+	if "a" <= input && input <= "z" || "A" <= input && input <= "Z" {
+		return
+	}
+
+	userInput, err := strconv.Atoi(input)
+
+	if err != nil {
+		fmt.Println("Not a valid selection")
+		return
+	}
+
+	if userInput >= 0 && userInput <= lengthOfItemList {
+		xclipCmd.Stdin = bytes.NewReader([]byte("https://7tv.app" + emotes[userInput].Href))
+
+		if err := xclipCmd.Run(); err != nil {
+			fmt.Println("Error copying to user clipboard:", err)
 		}
 
-		input = strings.TrimSpace(input)
-		userInput, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Error converting input to integer:", err)
-			return
-		}
-
-		if userInput >= 0 && userInput <= lengthOfItemList {
-			xclipCmd.Stdin = bytes.NewReader([]byte("https://7tv.app" + emotes[userInput].Href))
-			if err := xclipCmd.Run(); err != nil {
-				fmt.Println("Error copying to user clipboard:", err)
-			}
-			fmt.Println("Copied emote " + emotes[userInput].Title + " to clipboard")
-			break
-		} else {
-			fmt.Println("Input didn't match any emotes. Please try again.")
-		}
+		fmt.Println("Copied emote " + emotes[userInput].Title + " to clipboard")
+	} else {
+		fmt.Println("Input didn't match any emotes. Please try again.")
 	}
 }
