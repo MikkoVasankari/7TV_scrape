@@ -21,7 +21,7 @@ func main() {
 
 	if len(args) < 2 || len(args) > 2 {
 		fmt.Println("You need to add a name for emote")
-		fmt.Println("Like: ./scrape_7TV emotename")
+		fmt.Println("Like " + args[0] + " emotename")
 		return
 	}
 
