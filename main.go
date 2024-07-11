@@ -84,12 +84,12 @@ func getEmotes(emote_name string, emotes *[]Emote) bool {
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println("Error executing command:", err)
-		return gotAnyEmotes
+		return false
 	}
 
 	if strings.TrimSpace(bytes.NewBuffer(output).String()) == "No emotes found" {
 		fmt.Println("\nNo emotes found for " + emote_name + ", make a new search")
-		return false
+		return gotAnyEmotes
 	}
 
 	err = json.Unmarshal(output, &emotes)
