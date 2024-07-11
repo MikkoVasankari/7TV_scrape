@@ -25,29 +25,34 @@ func main() {
 		return
 	}
 
-	emote_name := args[1]
+	emoteName := args[1]
 
 	var emotes []Emote
-
-	getEmotes(emote_name, &emotes)
+	var input string
+	emotesFetched := false
 
 	for {
-		input := getUserInput("Select emote by giving it's index (q to quit | n new search) ")
 
-		if input == "q" {
-			fmt.Println("Closing program ...")
-			break
+		if !emotesFetched {
+			if !getEmotes(emoteName, &emotes) {
+				emoteName = getUserInput("Write new emote name to search for: ")
+				continue
+			} else {
+				emotesFetched = true
+			}
 		}
 
+		input = getUserInput("Select emote by giving its index or (q to quit | n new search) ")
+
 		if input == "n" {
-			input = getUserInput("Write new emote name to search for: ")
-			getEmotes(input, &emotes)
+			emoteName = getUserInput("Write new emote name to search for: ")
+			emotesFetched = false
+			continue
 		}
 
 		if input >= "0" || input <= "9" {
 			copyEmoteToClipboard(input, emotes, len(emotes)-1)
 		}
-
 	}
 }
 
@@ -61,34 +66,44 @@ func getUserInput(infoText string) string {
 	if err != nil {
 		return "Error reading user input"
 	}
+
+	if input == "q" {
+		fmt.Println("Exiting application ... ")
+		os.Exit(0)
+	}
+
 	return input
 }
 
-func getEmotes(emote_name string, emotes *[]Emote) {
+func getEmotes(emote_name string, emotes *[]Emote) bool {
+	gotAnyEmotes := false
 	cmd := exec.Command("node", "fetchEmote.js", emote_name)
 
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println("Error executing command:", err)
-		return
+		return gotAnyEmotes
 	}
 
 	if strings.TrimSpace(bytes.NewBuffer(output).String()) == "No emotes found" {
-		fmt.Println("\nNo emotes found for " + emote_name + " , make a new search")
-		return
+		fmt.Println("\nNo emotes found for " + emote_name + ", make a new search")
+		return false
 	}
 
 	err = json.Unmarshal(output, &emotes)
 
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
-		return
+		return false
 	}
 
 	fmt.Println("Suggested Emotes:")
 	for index, emote := range *emotes {
-		fmt.Printf("%v Link: https://7tv.app%s  Title: %s\n", index, emote.Href, emote.Title)
+		fmt.Printf("Index: %v Link: https://7tv.app%s  Title: %s\n", index, emote.Href, emote.Title)
 	}
+	gotAnyEmotes = true
+
+	return gotAnyEmotes
 }
 
 func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int) {
