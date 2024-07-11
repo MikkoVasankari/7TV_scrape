@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -27,6 +28,7 @@ func main() {
 
 	emoteName := args[1]
 
+	operatingSystem := runtime.GOOS
 	var emotes []Emote
 	var input string
 	emotesFetched := false
@@ -51,7 +53,7 @@ func main() {
 		}
 
 		if input >= "0" || input <= "9" {
-			copyEmoteToClipboard(input, emotes, len(emotes)-1)
+			copyEmoteToClipboard(input, emotes, len(emotes)-1, operatingSystem)
 		}
 	}
 }
@@ -106,8 +108,17 @@ func getEmotes(emote_name string, emotes *[]Emote) bool {
 	return gotAnyEmotes
 }
 
-func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int) {
-	xclipCmd := exec.Command("xclip", "-selection", "clipboard")
+func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int, operatingSystem string) {
+	var clipboardCmd *exec.Cmd
+
+	switch operatingSystem {
+	case "linux":
+		clipboardCmd = exec.Command("xclip", "-selection", "clipboard")
+	case "windows":
+		clipboardCmd = exec.Command("cmd", "/c", "clip")
+	default:
+		fmt.Println("unsupported platform")
+	}
 
 	if len(input) > 1 {
 		return
@@ -125,9 +136,9 @@ func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int) {
 	}
 
 	if userInput >= 0 && userInput <= lengthOfItemList {
-		xclipCmd.Stdin = bytes.NewReader([]byte("https://7tv.app" + emotes[userInput].Href))
+		clipboardCmd.Stdin = bytes.NewReader([]byte("https://7tv.app" + emotes[userInput].Href))
 
-		if err := xclipCmd.Run(); err != nil {
+		if err := clipboardCmd.Run(); err != nil {
 			fmt.Println("Error copying to user clipboard:", err)
 		}
 
