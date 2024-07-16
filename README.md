@@ -2,7 +2,7 @@
 
 CLI tool that prints out emotes from [7TV.app](https://7tv.app/) with users input.
 
-Currently requires xclip tool to easily copy emotes address to user cliboard.
+Copies emote's link to users clipboard by giving it's index as answer to the query.
 
 ```
 ./scrape_7TV emotename
