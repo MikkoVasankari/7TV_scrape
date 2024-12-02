@@ -78,8 +78,17 @@ func getUserInput(infoText string) string {
 }
 
 func getEmotes(emote_name string, emotes *[]Emote) bool {
+	wd, err := os.Executable()
+
+	if err != nil {
+		fmt.Print("Couldn't get os.Getwd()")
+	}
+
+	wdParsed := wd[:strings.LastIndex(wd, "/")]
+
 	gotAnyEmotes := false
-	cmd := exec.Command("node", "fetchEmote.js", emote_name)
+
+	cmd := exec.Command("node", wdParsed+"/fetchEmote.js", emote_name)
 
 	output, err := cmd.Output()
 	if err != nil {
