@@ -81,7 +81,7 @@ func getEmotes(emote_name string, emotes *[]Emote) bool {
 	wd, err := os.Executable()
 
 	if err != nil {
-		fmt.Print("Couldn't get os.Getwd()")
+		fmt.Print("Couldn't get os.Executable()")
 	}
 
 	wdParsed := wd[:strings.LastIndex(wd, "/")]
