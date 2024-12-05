@@ -36,7 +36,7 @@ func main() {
 	for {
 
 		if !emotesFetched {
-			if !getEmotes(emoteName, &emotes) {
+			if !getEmotes(emoteName, &emotes, operatingSystem) {
 				emoteName = getUserInput("Write new emote name to search for: ")
 				continue
 			} else {
@@ -77,18 +77,28 @@ func getUserInput(infoText string) string {
 	return input
 }
 
-func getEmotes(emote_name string, emotes *[]Emote) bool {
-	wd, err := os.Executable()
+func getEmotes(emote_name string, emotes *[]Emote, operatingSystem string) bool {
+	var pathSeparator string
+	
+	switch operatingSystem {
+	case "linux":
+		pathSeparator = "/"
+	case "windows":
+		pathSeparator = "\\"
+	default:
+		fmt.Println("unsupported platform")
+	}
 
+	wd, err := os.Executable()
 	if err != nil {
 		fmt.Print("Couldn't get os.Executable()")
 	}
-
-	wdParsed := wd[:strings.LastIndex(wd, "/")]
+	
+	wdParsed := wd[:strings.LastIndex(wd, pathSeparator)]
 
 	gotAnyEmotes := false
 
-	cmd := exec.Command("node", wdParsed+"/fetchEmote.js", emote_name)
+	cmd := exec.Command("node", wdParsed+pathSeparator+"fetchEmote.js", emote_name)
 
 	output, err := cmd.Output()
 	if err != nil {
