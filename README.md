@@ -1,7 +1,7 @@
 ### 7TV_scrape
 
 
-#### ! Currently doesn't work 'cause 7TV.app website is being updated and API was changed !
+#### ! Currently works with old 7TV.app. Need to wait for new finished 7TV.app website. !
 
 CLI tool that prints out emotes from [7TV.app](https://7tv.app/) with users input.
 

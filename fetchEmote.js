@@ -17,12 +17,15 @@ let emotesFound = false;
   const page = await browser.newPage();
 
   const emote = arg[0];
-  await page.goto("https://7tv.app/emotes?page=1&query=" + emote, {
+  await page.goto("https://old.7tv.app/emotes?page=1&query=" + emote, {
     waitUntil: "networkidle2",
   });
 
   try {
-    await page.waitForSelector(".emote-card-wrapper", { visible: true, timeout: 10000 });
+    await page.waitForSelector(".emote-card-wrapper", {
+      visible: true,
+      timeout: 10000,
+    });
     emotesFound = true;
   } catch (error) {
     console.log("No emotes found");
@@ -30,7 +33,7 @@ let emotesFound = false;
 
   const data = await page.evaluate(() => {
     const emoteCards = document.querySelectorAll(
-      ".emote-card-wrapper .emote-card"
+      ".emote-card-wrapper .emote-card",
     );
     const result = [];
 
