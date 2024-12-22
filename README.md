@@ -12,3 +12,6 @@ Copies emote's link to users clipboard by giving it's index as answer to the que
 ```
 
 ![Example picture of usage in CLI](assets/example_usage.png)
+
+### TODO
+- [] Change webscraper from javascript to Go
