@@ -120,7 +120,7 @@ func getEmotes(emote_name string, emotes *[]Emote, operatingSystem string) bool 
 
 	fmt.Println("Suggested Emotes:")
 	for index, emote := range *emotes {
-		fmt.Printf("Index: %v Link: https://7tv.app%s  Title: %s\n", index, emote.Href, emote.Title)
+		fmt.Printf("Index: %v Link: https://old.7tv.app%s  Title: %s\n", index, emote.Href, emote.Title)
 	}
 	gotAnyEmotes = true
 
@@ -155,7 +155,7 @@ func copyEmoteToClipboard(input string, emotes []Emote, lengthOfItemList int, op
 	}
 
 	if userInput >= 0 && userInput <= lengthOfItemList {
-		clipboardCmd.Stdin = bytes.NewReader([]byte("https://7tv.app" + emotes[userInput].Href))
+		clipboardCmd.Stdin = bytes.NewReader([]byte("https://old.7tv.app" + emotes[userInput].Href))
 
 		if err := clipboardCmd.Run(); err != nil {
 			fmt.Println("Error copying to user clipboard:", err)
