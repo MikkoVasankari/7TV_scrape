@@ -34,7 +34,6 @@ func main() {
 	emotesFetched := false
 
 	for {
-
 		if !emotesFetched {
 			if !getEmotes(emoteName, &emotes, operatingSystem) {
 				emoteName = getUserInput("Write new emote name to search for: ")
@@ -72,6 +71,10 @@ func getUserInput(infoText string) string {
 	if input == "q" {
 		fmt.Println("Exiting application ... ")
 		os.Exit(0)
+	}
+
+	if input != "q" || input != "n" {
+		fmt.Println("Can't understand given input")
 	}
 
 	return input
