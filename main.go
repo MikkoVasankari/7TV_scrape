@@ -73,7 +73,7 @@ func getUserInput(infoText string) string {
 		os.Exit(0)
 	}
 
-	if input != "q" || input != "n" {
+	if input != "q" && input != "n" {
 		fmt.Println("Can't understand given input")
 	}
 
@@ -82,7 +82,7 @@ func getUserInput(infoText string) string {
 
 func getEmotes(emote_name string, emotes *[]Emote, operatingSystem string) bool {
 	var pathSeparator string
-	
+
 	switch operatingSystem {
 	case "linux":
 		pathSeparator = "/"
@@ -96,7 +96,7 @@ func getEmotes(emote_name string, emotes *[]Emote, operatingSystem string) bool 
 	if err != nil {
 		fmt.Print("Couldn't get os.Executable()")
 	}
-	
+
 	wdParsed := wd[:strings.LastIndex(wd, pathSeparator)]
 
 	gotAnyEmotes := false
