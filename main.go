@@ -51,6 +51,10 @@ func main() {
 			continue
 		}
 
+		if input != "q" && input != "n" {
+			fmt.Println("Can't understand given input")
+		}
+
 		if input >= "0" || input <= "9" {
 			copyEmoteToClipboard(input, emotes, len(emotes)-1, operatingSystem)
 		}
@@ -71,10 +75,6 @@ func getUserInput(infoText string) string {
 	if input == "q" {
 		fmt.Println("Exiting application ... ")
 		os.Exit(0)
-	}
-
-	if input != "q" && input != "n" {
-		fmt.Println("Can't understand given input")
 	}
 
 	return input
