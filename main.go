@@ -51,12 +51,17 @@ func main() {
 			continue
 		}
 
-		if input != "q" && input != "n" {
-			fmt.Println("Can't understand given input")
-		}
-
 		if input >= "0" || input <= "9" {
 			copyEmoteToClipboard(input, emotes, len(emotes)-1, operatingSystem)
+		}
+
+		inputAsInt, err := strconv.Atoi(input)
+		if err != nil {
+			fmt.Print("Couldn't convert input to integer")
+		}
+
+		if input != "q" && input != "n" && inputAsInt <= 0 && inputAsInt > 9 {
+			fmt.Println("Can't understand given input")
 		}
 	}
 }
