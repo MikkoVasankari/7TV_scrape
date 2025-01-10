@@ -57,7 +57,7 @@ func main() {
 
 		inputAsInt, err := strconv.Atoi(input)
 		if err != nil {
-			fmt.Print("Couldn't convert input to integer")
+			fmt.Print("Couldn't convert input to integer \n")
 		}
 
 		if input != "q" && input != "n" && inputAsInt <= 0 && inputAsInt > 9 {
